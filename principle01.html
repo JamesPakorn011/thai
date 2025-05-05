@@ -1,0 +1,792 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบวิชาภาษาไทย หลักการใช้ภาษา</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f9f7ff;
+        }
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(138, 75, 255, 0.1);
+        }
+        .btn-primary {
+            background-color: #8a4bff;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #7a3aef;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #e4daff;
+            color: #6b21a8;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #d4c4ff;
+            transform: translateY(-2px);
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #e4daff;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #8a4bff;
+            transition: width 0.3s ease;
+        }
+        .question-nav-item {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .question-nav-item.active {
+            background-color: #8a4bff;
+            color: white;
+        }
+        .question-nav-item.answered {
+            background-color: #d4c4ff;
+            color: #6b21a8;
+        }
+        .timer-text {
+            font-size: 14px;
+            color: #6b21a8;
+        }
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .option-container {
+            border: 2px solid #e4daff;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .option-container:hover {
+            border-color: #8a4bff;
+            background-color: #f9f7ff;
+        }
+        .option-container.selected {
+            border-color: #8a4bff;
+            background-color: #f3f0ff;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4">
+    <div id="app" class="quiz-container p-6">
+        <!-- Login Screen -->
+        <div id="login-screen" class="py-10">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-purple-800 mb-2">แบบทดสอบวิชาภาษาไทย</h1>
+                <p class="text-lg text-purple-600">มัธยมศึกษาปีที่ 4 หลักการใช้ภาษา</p>
+                <div class="flex justify-center mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="max-w-md mx-auto bg-white rounded-lg p-6 shadow-md border border-purple-100">
+                <h2 class="text-xl font-semibold text-purple-800 mb-4">กรุณากรอกข้อมูล</h2>
+                <div class="mb-4">
+                    <label for="student-name" class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล</label>
+                    <input type="text" id="student-name" class="w-full px-4 py-2 border border-purple-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="กรอกชื่อ-นามสกุล" required>
+                    <p id="name-error" class="text-red-500 text-sm mt-1 hidden">กรุณากรอกชื่อ-นามสกุล</p>
+                </div>
+                <button id="start-quiz-btn" class="w-full btn-primary py-2 px-4 rounded-md font-medium flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                    </svg>
+                    เริ่มทำแบบทดสอบ
+                </button>
+            </div>
+            
+            <div class="mt-8 bg-purple-50 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-purple-800 mb-2">คำชี้แจง</h3>
+                <ul class="list-disc pl-5 space-y-1 text-purple-700">
+                    <li>แบบทดสอบมีทั้งหมด 20 ข้อ</li>
+                    <li>แต่ละข้อมีเวลาทำ 3 นาที</li>
+                    <li>ต้องตอบคำถามก่อนไปข้อถัดไป</li>
+                    <li>สามารถย้อนกลับไปดูข้อที่ทำแล้วได้</li>
+                    <li>เมื่อทำครบทุกข้อ ระบบจะแสดงผลคะแนนและเฉลย</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-purple-800">วิชาภาษาไทย</h1>
+                <div class="text-right">
+                    <p class="text-sm text-gray-600" id="student-name-display"></p>
+                    <p class="text-sm text-gray-600">มัธยมศึกษาปีที่ 4 หลักการใช้ภาษา</p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="timer-text">เวลาที่เหลือ: <span id="timer">03:00</span></span>
+                    </div>
+                    <div class="text-sm text-purple-700 font-medium">
+                        ข้อที่ <span id="current-question">1</span> จาก <span id="total-questions">20</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="timer-progress" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 mb-6 shadow-sm border border-purple-100">
+                <div id="question-container">
+                    <!-- Question content will be inserted here -->
+                </div>
+            </div>
+
+            <div class="flex justify-between mb-8">
+                <button id="prev-btn" class="btn-secondary py-2 px-4 rounded-md font-medium flex items-center" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    ข้อก่อนหน้า
+                </button>
+                <button id="next-btn" class="btn-primary py-2 px-4 rounded-md font-medium flex items-center" disabled>
+                    ข้อถัดไป
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="bg-purple-50 rounded-lg p-4 mb-6">
+                <h3 class="text-md font-semibold text-purple-800 mb-3">เลือกข้อ</h3>
+                <div class="flex flex-wrap gap-2" id="question-navigator">
+                    <!-- Question navigation buttons will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden py-6">
+            <div class="text-center mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-purple-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h1 class="text-3xl font-bold text-purple-800 mb-2">ผลการทดสอบ</h1>
+                <p class="text-lg text-purple-600" id="student-result-name"></p>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 mb-6 shadow-md border border-purple-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-purple-800">สรุปคะแนน</h2>
+                    <div class="text-right">
+                        <p class="text-2xl font-bold text-purple-700"><span id="score">0</span>/<span id="total-score">20</span></p>
+                        <p class="text-lg font-medium text-purple-600"><span id="percentage">0</span>%</p>
+                    </div>
+                </div>
+                
+                <div class="w-full bg-purple-100 rounded-full h-4 mb-6">
+                    <div class="bg-purple-600 h-4 rounded-full" id="score-bar" style="width: 0%"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <p class="text-sm text-purple-700 mb-1">จำนวนข้อที่ถูก</p>
+                        <p class="text-xl font-bold text-purple-800" id="correct-answers">0</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <p class="text-sm text-red-700 mb-1">จำนวนข้อที่ผิด</p>
+                        <p class="text-xl font-bold text-red-800" id="wrong-answers">0</p>
+                    </div>
+                </div>
+
+                <button id="show-answers-btn" class="w-full btn-primary py-2 px-4 rounded-md font-medium flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>
+                    ดูเฉลยแบบทดสอบ
+                </button>
+            </div>
+
+            <div id="answers-container" class="hidden">
+                <h3 class="text-xl font-semibold text-purple-800 mb-4">เฉลยแบบทดสอบ</h3>
+                <div id="answers-list" class="space-y-4">
+                    <!-- Answers will be inserted here -->
+                </div>
+                <div class="mt-6">
+                    <button id="back-to-results-btn" class="w-full btn-secondary py-2 px-4 rounded-md font-medium">
+                        กลับไปหน้าสรุปผล
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-8 pt-6 border-t border-purple-100 text-center">
+            <div class="flex items-center justify-center mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                </svg>
+                <p class="text-sm text-purple-700">พัฒนาโดย ฟ้าใส เด็กเรียน</p>
+            </div>
+            <div class="flex justify-center space-x-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                </svg>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Quiz data - หลักการใช้ภาษาไทย
+        const quizData = [
+            {
+                question: "ข้อใดใช้คำราชาศัพท์ได้ถูกต้อง",
+                options: [
+                    "พระบาทสมเด็จพระเจ้าอยู่หัวเสด็จไปทรงเปิดงาน",
+                    "สมเด็จพระนางเจ้าฯ พระบรมราชินีนาถทรงนอน",
+                    "พระเจ้าวรวงศ์เธอ พระองค์เจ้าโสมสวลีฯ ทรงรับประทานอาหาร",
+                    "สมเด็จพระเทพรัตนราชสุดาฯ ทรงพระดำเนิน"
+                ],
+                answer: 0,
+                explanation: "คำราชาศัพท์ที่ถูกต้องคือ 'พระบาทสมเด็จพระเจ้าอยู่หัวเสด็จไปทรงเปิดงาน' ส่วนข้ออื่นๆ ใช้คำราชาศัพท์ไม่ถูกต้อง เช่น สมเด็จพระนางเจ้าฯ พระบรมราชินีนาถ ต้องใช้ 'บรรทม' ไม่ใช่ 'ทรงนอน'"
+            },
+            {
+                question: "ข้อใดเป็นประโยคกรรม",
+                options: [
+                    "นักเรียนอ่านหนังสือ",
+                    "แมวถูกสุนัขไล่",
+                    "เขาวิ่งเร็วมาก",
+                    "ดอกไม้บานสะพรั่ง"
+                ],
+                answer: 1,
+                explanation: "ประโยคกรรม คือ ประโยคที่มีกรรมเป็นประธานของประโยค ในที่นี้คือ 'แมวถูกสุนัขไล่' โดยแมวเป็นผู้ถูกกระทำ (กรรม)"
+            },
+            {
+                question: "ข้อใดเป็นคำสมาส",
+                options: [
+                    "น้ำตาล",
+                    "ราชบุรุษ",
+                    "ตู้เย็น",
+                    "บ้านเรือน"
+                ],
+                answer: 1,
+                explanation: "คำสมาส คือ คำที่นำศัพท์บาลีสันสกฤตตั้งแต่ 2 คำขึ้นไปมาสนธิกัน 'ราชบุรุษ' มาจาก ราช + บุรุษ เป็นคำสมาส"
+            },
+            {
+                question: "ข้อใดเป็นคำสนธิ",
+                options: [
+                    "ราชการ",
+                    "ราชาธิปไตย",
+                    "ราโชวาท",
+                    "ราชบัณฑิต"
+                ],
+                answer: 2,
+                explanation: "คำสนธิ คือ การนำคำตั้งแต่ 2 คำมาเชื่อมกันโดยมีการเปลี่ยนแปลงเสียงบางเสียง 'ราโชวาท' มาจาก ราช + โอวาท เป็นคำสนธิ"
+            },
+            {
+                question: "ข้อใดเป็นคำซ้อน",
+                options: [
+                    "เสื้อผ้า",
+                    "ชาวนา",
+                    "ลูกเขย",
+                    "น้ำแข็ง"
+                ],
+                answer: 0,
+                explanation: "คำซ้อน คือ คำที่นำคำที่มีความหมายเหมือนกัน คล้ายกัน หรือเกี่ยวข้องกันมาซ้อนกัน 'เสื้อผ้า' เป็นคำซ้อนที่มีความหมายเกี่ยวข้องกัน"
+            },
+            {
+                question: "ข้อใดเป็นคำประสม",
+                options: [
+                    "ลูกตา",
+                    "ลูกเขย",
+                    "ลูกหลาน",
+                    "ลูกชาย"
+                ],
+                answer: 0,
+                explanation: "คำประสม คือ คำที่นำคำตั้งแต่ 2 คำขึ้นไปมารวมกันแล้วเกิดความหมายใหม่ 'ลูกตา' หมายถึง ส่วนของตาที่เป็นทรงกลม ไม่ได้หมายถึงลูกของตา"
+            },
+            {
+                question: "ข้อใดใช้คำไวพจน์ไม่ถูกต้อง",
+                options: [
+                    "พระจันทร์ลอยเด่นอยู่บนนภา",
+                    "พระพายพัดโชยมาเย็นสบาย",
+                    "พระพิรุณโปรยปรายลงมาชุ่มฉ่ำ",
+                    "พระพิฆเนศเป็นเทพแห่งปัญญา"
+                ],
+                answer: 1,
+                explanation: "คำไวพจน์ คือ คำที่มีความหมายเหมือนกัน 'พระพาย' เป็นคำไวพจน์ของ 'ลม' ไม่ใช่ 'ลมพัด' จึงไม่ควรใช้ว่า 'พระพายพัด' เพราะจะเป็นการซ้ำซ้อน"
+            },
+            {
+                question: "ข้อใดใช้คำบุพบทไม่ถูกต้อง",
+                options: [
+                    "เขาเดินทางโดยรถไฟ",
+                    "เธอทำงานด้วยความตั้งใจ",
+                    "ฉันไปกับเพื่อน",
+                    "นักเรียนต้องแต่งกายตามระเบียบ"
+                ],
+                answer: 3,
+                explanation: "คำบุพบท 'ตาม' ใช้กับการทำตามแบบอย่าง ส่วน 'ตามระเบียบ' ควรใช้ 'ให้เป็นไปตามระเบียบ' หรือ 'ให้ถูกระเบียบ'"
+            },
+            {
+                question: "ข้อใดใช้คำสันธานได้ถูกต้อง",
+                options: [
+                    "เขาทำงานหนักแต่ไม่เคยบ่น",
+                    "เธอไม่มาเรียนเพราะป่วย",
+                    "ฉันจะไปซื้อของและกลับบ้าน",
+                    "ถึงแม้ฝนตกแต่ฉันก็จะไป"
+                ],
+                answer: 1,
+                explanation: "คำสันธาน 'เพราะ' ใช้เชื่อมประโยคเหตุผล 'เธอไม่มาเรียนเพราะป่วย' ใช้ได้ถูกต้อง ส่วนข้อ 4 มีคำสันธานซ้ำซ้อน 'ถึงแม้...แต่' ควรใช้อย่างใดอย่างหนึ่ง"
+            },
+            {
+                question: "ข้อใดใช้ระดับภาษาไม่เหมาะสม",
+                options: [
+                    "อาจารย์บอกว่าพรุ่งนี้จะมีการสอบ",
+                    "คุณพ่อของฉันเสียชีวิตเมื่อปีที่แล้ว",
+                    "ท่านนายกฯ แดกข้าวกับประชาชน",
+                    "เด็กๆ กำลังเล่นกันอยู่ในสนาม"
+                ],
+                answer: 2,
+                explanation: "ระดับภาษาไม่เหมาะสม คือ 'ท่านนายกฯ แดกข้าวกับประชาชน' เพราะคำว่า 'แดก' เป็นภาษาปาก ไม่เหมาะสมกับการกล่าวถึงบุคคลสำคัญ ควรใช้ 'รับประทานอาหาร'"
+            },
+            {
+                question: "ข้อใดใช้คำเชื่อมได้ถูกต้อง",
+                options: [
+                    "เขาทำงานหนักเพื่อที่จะเพื่อให้ได้เลื่อนตำแหน่ง",
+                    "ถึงแม้ว่าฝนจะตกหนักแต่เขาก็ยังไปทำงาน",
+                    "เนื่องจากรถติดมากเขาจึงมาสาย",
+                    "เขาไม่สบายเพราะฉะนั้นเขาจึงไม่มาโรงเรียน"
+                ],
+                answer: 2,
+                explanation: "การใช้คำเชื่อม 'เนื่องจาก...จึง' ในประโยค 'เนื่องจากรถติดมากเขาจึงมาสาย' ถูกต้อง ส่วนข้ออื่นมีการใช้คำเชื่อมซ้ำซ้อนหรือไม่สอดคล้องกัน"
+            },
+            {
+                question: "ข้อใดใช้คำทับศัพท์ได้ถูกต้อง",
+                options: [
+                    "เขาชอบดื่มโคฟฟี่",
+                    "ฉันซื้อคอมพิวเตอร์เครื่องใหม่",
+                    "เธอใส่เสื้อสีพิงค์",
+                    "เขาเล่นฟุตบอลล์ทุกวัน"
+                ],
+                answer: 1,
+                explanation: "คำทับศัพท์ที่ถูกต้องคือ 'คอมพิวเตอร์' ส่วน 'โคฟฟี่' ที่ถูกต้องคือ 'กาแฟ', 'พิงค์' ที่ถูกต้องคือ 'ชมพู', และ 'ฟุตบอลล์' ที่ถูกต้องคือ 'ฟุตบอล'"
+            },
+            {
+                question: "ข้อใดใช้คำภาษาต่างประเทศโดยไม่จำเป็น",
+                options: [
+                    "เขาเป็นแฟนคลับของนักร้องคนนี้",
+                    "ฉันต้องการปริ้นท์เอกสารนี้",
+                    "เธอชอบดูภาพยนตร์แอ็คชั่น",
+                    "เขาเซ็นชื่อในเอกสาร"
+                ],
+                answer: 1,
+                explanation: "คำว่า 'ปริ้นท์' มีคำไทยที่ใช้แทนได้คือ 'พิมพ์' จึงเป็นการใช้คำภาษาต่างประเทศโดยไม่จำเป็น"
+            },
+            {
+                question: "ข้อใดใช้คำฟุ่มเฟือย",
+                options: [
+                    "เขาเป็นคนขยันขันแข็ง",
+                    "เธอพูดจาไพเราะน่าฟัง",
+                    "ฉันรู้สึกดีใจและมีความสุขมาก",
+                    "นักเรียนตั้งใจเรียนหนังสือ"
+                ],
+                answer: 2,
+                explanation: "คำฟุ่มเฟือย คือ การใช้คำมากเกินความจำเป็น 'ฉันรู้สึกดีใจและมีความสุขมาก' คำว่า 'ดีใจ' และ 'มีความสุข' มีความหมายซ้ำซ้อนกัน"
+            },
+            {
+                question: "ข้อใดใช้คำกริยาได้ถูกต้อง",
+                options: [
+                    "เขากำลังนั่งยืนอยู่ตรงนั้น",
+                    "เธอเดินวิ่งไปโรงเรียน",
+                    "ฉันนอนหลับสบาย",
+                    "แม่นั่งนอนพักผ่อน"
+                ],
+                answer: 2,
+                explanation: "การใช้คำกริยา 'นอนหลับ' ถูกต้อง เพราะ 'หลับ' เป็นอาการที่เกิดขึ้นขณะนอน ส่วนข้ออื่นใช้คำกริยาที่ขัดแย้งกัน เช่น 'นั่งยืน', 'เดินวิ่ง', 'นั่งนอน'"
+            },
+            {
+                question: "ข้อใดใช้คำนามได้ถูกต้อง",
+                options: [
+                    "ความรักเป็นสิ่งสวยงาม",
+                    "ความเขียวของต้นไม้ทำให้สดชื่น",
+                    "ความวิ่งของเขาเร็วมาก",
+                    "ความเหนื่อยทำให้ฉันหลับสบาย"
+                ],
+                answer: 0,
+                explanation: "การใช้คำนาม 'ความรัก' ถูกต้อง เพราะ 'รัก' เป็นคำกริยาที่สามารถเติม 'ความ' นำหน้าได้ ส่วน 'ความเขียว', 'ความวิ่ง', 'ความเหนื่อย' ไม่ถูกต้องตามหลักการใช้คำนาม"
+            },
+            {
+                question: "ข้อใดใช้คำวิเศษณ์ได้ถูกต้อง",
+                options: [
+                    "เขาวิ่งเร็วรวดเร็ว",
+                    "เธอพูดเบาๆ เสียงเบา",
+                    "ฉันทำงานหนักมาก",
+                    "แม่ทำอาหารอร่อยรสชาติดี"
+                ],
+                answer: 2,
+                explanation: "การใช้คำวิเศษณ์ 'หนักมาก' ถูกต้อง เพราะ 'มาก' ขยาย 'หนัก' ได้ ส่วนข้ออื่นมีการใช้คำวิเศษณ์ซ้ำซ้อนหรือไม่เหมาะสม"
+            },
+            {
+                question: "ข้อใดใช้คำสรรพนามได้ถูกต้อง",
+                options: [
+                    "ท่านอาจารย์กรุณาช่วยตรวจงานให้ผมหน่อยครับ",
+                    "คุณแม่คะ หนูขอเงินไปโรงเรียนค่ะ",
+                    "คุณครูครับ กระผมขอถามปัญหาหน่อยครับ",
+                    "พี่ครับ ผมขอยืมปากกาหน่อยนะครับ"
+                ],
+                answer: 1,
+                explanation: "การใช้คำสรรพนาม 'หนู' ของลูกสาวเรียกตัวเองกับแม่ถูกต้อง ส่วนข้อ 3 ใช้ 'กระผม' ซึ่งเป็นคำสรรพนามที่ใช้กับผู้ใหญ่ที่เคารพมาก ไม่เหมาะสมกับการใช้กับครู"
+            },
+            {
+                question: "ข้อใดใช้คำลักษณนามได้ถูกต้อง",
+                options: [
+                    "ดินสอ 5 แท่ง",
+                    "นาฬิกา 2 เรือน",
+                    "รถยนต์ 3 คัน",
+                    "ทุเรียน 4 ผล"
+                ],
+                answer: 3,
+                explanation: "คำลักษณนามที่ถูกต้องสำหรับทุเรียนคือ 'ผล' ส่วนข้ออื่นๆ ถูกต้องทั้งหมด"
+            },
+            {
+                question: "ข้อใดใช้สำนวนไทยได้ถูกต้อง",
+                options: [
+                    "เขาทำงานแบบสุกเอาเผากิน จึงได้ผลงานดี",
+                    "เธอเป็นคนปากหวานก้นเปรี้ยว พูดดีแต่ใจร้าย",
+                    "ฉันรู้สึกเกลียดเขาเข้ากระดูกดำ",
+                    "เขาชอบทำตัวเป็นม้านั่งร้าน คอยช่วยเหลือผู้อื่น"
+                ],
+                answer: 1,
+                explanation: "สำนวน 'ปากหวานก้นเปรี้ยว' หมายถึง พูดจาดีแต่ใจร้าย ใช้ได้ถูกต้อง ส่วนข้ออื่นใช้ความหมายผิด เช่น 'สุกเอาเผากิน' หมายถึงทำงานไม่รอบคอบ, 'เข้ากระดูกดำ' ต้องใช้กับคำว่า 'รัก' ไม่ใช่ 'เกลียด', 'ม้านั่งร้าน' หมายถึงผู้ที่ถูกใช้ประโยชน์แล้วถูกทอดทิ้ง"
+            },
+            {
+                question: "ข้อใดใช้โวหารได้ถูกต้อง",
+                options: [
+                    "ดอกบัวบานสะพรั่งเต็มสระน้ำ เป็นโวหารบรรยาย",
+                    "ความรักเปรียบเสมือนดอกไม้ที่สวยงาม เป็นโวหารพรรณนา",
+                    "การเรียนหนังสือมี 4 ขั้นตอน คือ ฟัง พูด อ่าน เขียน เป็นโวหารอธิบาย",
+                    "ท่านผู้ฟังที่เคารพ วันนี้ผมจะมาพูดเรื่องการออมเงิน เป็นโวหารเทศนา"
+                ],
+                answer: 2,
+                explanation: "โวหารอธิบาย คือ การใช้ถ้อยคำที่ชี้แจงเรื่องราวให้เข้าใจ 'การเรียนหนังสือมี 4 ขั้นตอน คือ ฟัง พูด อ่าน เขียน' เป็นโวหารอธิบาย ส่วนข้อ 1 เป็นโวหารพรรณนา ข้อ 2 เป็นโวหารอุปมา และข้อ 4 เป็นโวหารเทศนา"
+            }
+        ];
+
+        // Quiz variables
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = Array(quizData.length).fill(null);
+        let timerInterval;
+        let timeLeft = 180; // 3 minutes per question
+        let studentName = "";
+
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const answersContainer = document.getElementById('answers-container');
+        const studentNameInput = document.getElementById('student-name');
+        const nameError = document.getElementById('name-error');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const questionContainer = document.getElementById('question-container');
+        const questionNavigator = document.getElementById('question-navigator');
+        const timerElement = document.getElementById('timer');
+        const timerProgress = document.getElementById('timer-progress');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const studentNameDisplay = document.getElementById('student-name-display');
+        const studentResultName = document.getElementById('student-result-name');
+        const scoreElement = document.getElementById('score');
+        const totalScoreElement = document.getElementById('total-score');
+        const percentageElement = document.getElementById('percentage');
+        const scoreBar = document.getElementById('score-bar');
+        const correctAnswersElement = document.getElementById('correct-answers');
+        const wrongAnswersElement = document.getElementById('wrong-answers');
+        const showAnswersBtn = document.getElementById('show-answers-btn');
+        const backToResultsBtn = document.getElementById('back-to-results-btn');
+        const answersList = document.getElementById('answers-list');
+
+        // Initialize the quiz
+        function initQuiz() {
+            // Set total questions
+            totalQuestionsElement.textContent = quizData.length;
+            
+            // Create question navigator buttons
+            for (let i = 0; i < quizData.length; i++) {
+                const navButton = document.createElement('div');
+                navButton.className = 'question-nav-item bg-white border border-purple-200 text-purple-700 text-sm font-medium';
+                navButton.textContent = i + 1;
+                navButton.dataset.index = i;
+                navButton.addEventListener('click', () => {
+                    if (userAnswers[currentQuestion] !== null) {
+                        goToQuestion(i);
+                    } else {
+                        alert('กรุณาตอบคำถามปัจจุบันก่อนไปข้ออื่น');
+                    }
+                });
+                questionNavigator.appendChild(navButton);
+            }
+
+            // Start with first question
+            loadQuestion(0);
+        }
+
+        // Load a specific question
+        function loadQuestion(index) {
+            clearInterval(timerInterval);
+            currentQuestion = index;
+            
+            // Update current question display
+            currentQuestionElement.textContent = currentQuestion + 1;
+            
+            // Update navigation buttons state
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = userAnswers[currentQuestion] === null;
+            
+            // Update question navigator
+            const navButtons = questionNavigator.querySelectorAll('.question-nav-item');
+            navButtons.forEach((btn, i) => {
+                btn.classList.remove('active');
+                if (userAnswers[i] !== null) {
+                    btn.classList.add('answered');
+                } else {
+                    btn.classList.remove('answered');
+                }
+                if (i === currentQuestion) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Load question content
+            const question = quizData[currentQuestion];
+            questionContainer.innerHTML = `
+                <h2 class="text-lg font-semibold text-purple-800 mb-4">ข้อ ${currentQuestion + 1}: ${question.question}</h2>
+                <div class="space-y-3 mt-6">
+                    ${question.options.map((option, i) => `
+                        <div class="option-container p-3 cursor-pointer ${userAnswers[currentQuestion] === i ? 'selected' : ''}" data-index="${i}">
+                            <div class="flex items-center">
+                                <div class="h-5 w-5 rounded-full border-2 border-purple-400 flex items-center justify-center mr-3 ${userAnswers[currentQuestion] === i ? 'bg-purple-600 border-purple-600' : ''}">
+                                    ${userAnswers[currentQuestion] === i ? '<div class="h-2 w-2 rounded-full bg-white"></div>' : ''}
+                                </div>
+                                <label class="block text-gray-700 cursor-pointer">${option}</label>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Add event listeners to options
+            const optionContainers = questionContainer.querySelectorAll('.option-container');
+            optionContainers.forEach(container => {
+                container.addEventListener('click', () => {
+                    const index = parseInt(container.dataset.index);
+                    userAnswers[currentQuestion] = index;
+                    
+                    // Update UI
+                    optionContainers.forEach(c => c.classList.remove('selected'));
+                    container.classList.add('selected');
+                    
+                    nextBtn.disabled = false;
+                    
+                    // Update question navigator
+                    navButtons[currentQuestion].classList.add('answered');
+                });
+            });
+            
+            // Reset and start timer
+            timeLeft = 180; // 3 minutes
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        // Update timer display and progress
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update progress bar
+            const percentage = (timeLeft / 180) * 100;
+            timerProgress.style.width = `${percentage}%`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                
+                // If no answer selected, auto-select one
+                if (userAnswers[currentQuestion] === null) {
+                    userAnswers[currentQuestion] = Math.floor(Math.random() * 4); // Random answer
+                    
+                    // Update UI to show selected answer
+                    const optionContainers = questionContainer.querySelectorAll('.option-container');
+                    optionContainers.forEach(c => c.classList.remove('selected'));
+                    optionContainers[userAnswers[currentQuestion]].classList.add('selected');
+                    
+                    // Update navigator
+                    const navButtons = questionNavigator.querySelectorAll('.question-nav-item');
+                    navButtons[currentQuestion].classList.add('answered');
+                    
+                    nextBtn.disabled = false;
+                }
+                
+                // Auto-move to next question if not the last one
+                if (currentQuestion < quizData.length - 1) {
+                    setTimeout(() => {
+                        goToQuestion(currentQuestion + 1);
+                    }, 1000);
+                }
+            } else {
+                timeLeft--;
+            }
+        }
+
+        // Go to a specific question
+        function goToQuestion(index) {
+            if (index >= 0 && index < quizData.length) {
+                loadQuestion(index);
+            }
+        }
+
+        // Calculate and display results
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            // Calculate score
+            score = 0;
+            for (let i = 0; i < quizData.length; i++) {
+                if (userAnswers[i] === quizData[i].answer) {
+                    score++;
+                }
+            }
+            
+            // Update results display
+            scoreElement.textContent = score;
+            totalScoreElement.textContent = quizData.length;
+            const percentage = Math.round((score / quizData.length) * 100);
+            percentageElement.textContent = percentage;
+            scoreBar.style.width = `${percentage}%`;
+            correctAnswersElement.textContent = score;
+            wrongAnswersElement.textContent = quizData.length - score;
+            
+            // Show results screen
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+            answersContainer.classList.add('hidden');
+            
+            // Prepare answers list
+            answersList.innerHTML = '';
+            for (let i = 0; i < quizData.length; i++) {
+                const question = quizData[i];
+                const isCorrect = userAnswers[i] === question.answer;
+                
+                answersList.innerHTML += `
+                    <div class="bg-white rounded-lg p-4 border ${isCorrect ? 'border-green-200' : 'border-red-200'}">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-md font-semibold text-gray-800">ข้อ ${i + 1}: ${question.question}</h4>
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${isCorrect ? 'ถูกต้อง' : 'ไม่ถูกต้อง'}
+                            </span>
+                        </div>
+                        <div class="space-y-2 mb-3">
+                            ${question.options.map((option, j) => `
+                                <div class="flex items-center p-2 ${j === question.answer ? 'bg-green-50 rounded' : (j === userAnswers[i] && j !== question.answer ? 'bg-red-50 rounded' : '')}">
+                                    <div class="h-4 w-4 rounded-full mr-2 ${j === question.answer ? 'bg-green-500' : (j === userAnswers[i] && j !== question.answer ? 'bg-red-500' : 'bg-gray-200')}"></div>
+                                    <span class="text-gray-700 ${j === question.answer ? 'font-medium' : ''}">${option}</span>
+                                    ${j === question.answer ? '<span class="ml-2 text-green-600 text-sm">(คำตอบที่ถูกต้อง)</span>' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="text-sm bg-purple-50 p-3 rounded">
+                            <span class="font-medium text-purple-700">คำอธิบาย:</span> ${question.explanation}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Event Listeners
+        startQuizBtn.addEventListener('click', () => {
+            studentName = studentNameInput.value.trim();
+            if (studentName === '') {
+                nameError.classList.remove('hidden');
+                return;
+            }
+            
+            // Hide login screen, show quiz screen
+            loginScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            
+            // Display student name
+            studentNameDisplay.textContent = studentName;
+            studentResultName.textContent = studentName;
+            
+            // Initialize quiz
+            initQuiz();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            goToQuestion(currentQuestion - 1);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion < quizData.length - 1) {
+                goToQuestion(currentQuestion + 1);
+            } else {
+                // If this is the last question, show results
+                showResults();
+            }
+        });
+
+        showAnswersBtn.addEventListener('click', () => {
+            resultsScreen.querySelector('.bg-white').classList.add('hidden');
+            answersContainer.classList.remove('hidden');
+        });
+
+        backToResultsBtn.addEventListener('click', () => {
+            resultsScreen.querySelector('.bg-white').classList.remove('hidden');
+            answersContainer.classList.add('hidden');
+        });
+
+        // Initialize student name input validation
+        studentNameInput.addEventListener('input', () => {
+            if (studentNameInput.value.trim() !== '') {
+                nameError.classList.add('hidden');
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93ae1d0747acd033',t:'MTc0NjQyNTgzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
